@@ -3,9 +3,13 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var enforce = require('express-sslify');
+
 
 const uri = 'mongodb://aranza:pass19@ds249623.mlab.com:49623/cena';
 const mongoose = require('mongoose');
+
+
 
 mongoose.Promise = global.Promise;
 mongoose
@@ -28,6 +32,10 @@ var infoRouter = require('./routes/info');
 
 
 var app = express();
+
+app.use(enforce.HTTPS({
+  trustProtoHeader: true
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
