@@ -4,8 +4,28 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+const uri = 'mongodb://aranza:pass19@ds249623.mlab.com:49623/cena';
+const mongoose = require('mongoose');
+
+mongoose.Promise = global.Promise;
+mongoose
+  .connect(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(
+    () => {
+      console.log('Database connected');
+    },
+    err => {
+      console.log('Can not connect to the database' + err);
+    }
+  );
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var infoRouter = require('./routes/info');
+
 
 var app = express();
 
@@ -15,15 +35,18 @@ app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({
-  extended: false
-}));
+app.use(
+  express.urlencoded({
+    extended: false
+  })
+);
 // app.use(require('connect-history-api-fallback')())
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/info', infoRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
